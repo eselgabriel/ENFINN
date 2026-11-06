@@ -48,7 +48,11 @@
   .rows a:active, .rows a:hover { background: #f3f4f6; }
   .rows svg { width: 20px; height: 20px; flex: none; color: var(--accent); }
   .qr { margin: 12px 20px 20px; padding: 16px; border: 1px solid var(--line); border-radius: 16px; text-align: center; }
-  .qr button { all: unset; cursor: zoom-in; display: block; margin: 0 auto; }
+  .seg { display: flex; background: #f3f4f6; border-radius: 10px; padding: 3px; margin-bottom: 14px; }
+  .seg button { flex: 1; border: 0; background: transparent; font: inherit; font-size: 14px; font-weight: 600;
+    color: #5b6270; padding: 8px 6px; border-radius: 8px; cursor: pointer; min-height: 36px; }
+  .seg button[aria-selected="true"] { background: #fff; color: #111; box-shadow: 0 1px 2px rgba(0,0,0,.12); }
+  .qr #qrBtn { all: unset; cursor: zoom-in; display: block; margin: 0 auto; }
   .qr img { width: 100%; max-width: 230px; display: block; margin: 0 auto; image-rendering: pixelated; }
   .qr p { margin: 8px 0 0; font-size: 14px; color: var(--muted); }
   .actions { display: grid; gap: 10px; margin-top: 18px; }
@@ -97,10 +101,14 @@
         <span>{{web_mostrada}}</span></a></li>
     </ul>
     <div class="qr">
+      <div class="seg" role="tablist" aria-label="Tipo de código QR">
+        <button type="button" role="tab" data-qr="wallet" aria-selected="true">Agregar a Wallet</button>
+        <button type="button" role="tab" data-qr="contacto" aria-selected="false">Guardar contacto</button>
+      </div>
       <button type="button" id="qrBtn" aria-label="Ver código QR en grande">
-        <img src="qr-contacto.svg" alt="Código QR con la información de contacto">
+        <img id="qrImg" src="qr-wallet.svg" alt="Código QR">
       </button>
-      <p>Escanea con la cámara para guardar el contacto</p>
+      <p id="qrText">Escanea con la cámara para agregar esta tarjeta a tu Wallet</p>
     </div>
   </section>
 
@@ -156,10 +164,25 @@
     }
   });
 
+  var QR = {
+    wallet: { src: "qr-wallet.svg", text: "Escanea con la cámara para agregar esta tarjeta a tu Wallet" },
+    contacto: { src: "qr-contacto.svg", text: "Escanea con la cámara para guardar el contacto" }
+  };
+  var current = "wallet";
+  var tabs = document.querySelectorAll(".seg button");
+  Array.prototype.forEach.call(tabs, function (tab) {
+    tab.addEventListener("click", function () {
+      current = tab.getAttribute("data-qr");
+      Array.prototype.forEach.call(tabs, function (t) { t.setAttribute("aria-selected", t === tab ? "true" : "false"); });
+      document.getElementById("qrImg").src = QR[current].src;
+      document.getElementById("qrText").textContent = QR[current].text;
+    });
+  });
+
   document.getElementById("qrBtn").addEventListener("click", function () {
     var z = document.createElement("div");
     z.className = "zoom";
-    z.innerHTML = '<img src="qr-contacto.svg" alt="Código QR"><p>Escanea con la cámara para guardar el contacto<br>Toca para cerrar</p>';
+    z.innerHTML = '<img src="' + QR[current].src + '" alt="Código QR"><p>' + QR[current].text + '<br>Toca para cerrar</p>';
     z.addEventListener("click", function () { z.remove(); });
     document.body.appendChild(z);
   });

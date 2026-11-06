@@ -1,5 +1,6 @@
 """Utilidades compartidas: configuración, rutas y la vCard del QR."""
 import json
+import os
 import unicodedata
 from pathlib import Path
 
@@ -10,9 +11,40 @@ ASSETS = ROOT / "assets"
 LOGO = ASSETS / "logo-fue.png"
 
 
+# Valores que se pueden pasar por variables de entorno (útil en GitHub Actions)
+ENV_OVERRIDES = {
+    "GOOGLE_WALLET_ISSUER_ID": ("google", "issuer_id"),
+    "APPLE_TEAM_ID": ("apple", "team_identifier"),
+    "APPLE_PASS_TYPE_ID": ("apple", "pass_type_identifier"),
+}
+
+
 def load_config():
     with open(ROOT / "config.json", encoding="utf-8") as f:
-        return json.load(f)
+        cfg = json.load(f)
+    for env, (section, key) in ENV_OVERRIDES.items():
+        if os.environ.get(env):
+            cfg[section][key] = os.environ[env].strip()
+    return cfg
+
+
+WALLET_PATH = "w/"   # página corta que abre "Agregar a Wallet"
+
+
+def pass_qr_value(cfg):
+    """Contenido del QR que aparece dentro del pase.
+    - "wallet": un enlace corto; quien lo escanea con la cámara agrega la
+      tarjeta a su Google Wallet (Android) o Apple Wallet (iPhone).
+    - "contacto": la vCard; quien lo escanea guarda el contacto."""
+    if cfg.get("qr_del_pase", "wallet") == "wallet":
+        return public_url(cfg, WALLET_PATH)
+    return build_vcard(cfg, ascii_safe=True)
+
+
+def pass_qr_text(cfg):
+    if cfg.get("qr_del_pase", "wallet") == "wallet":
+        return "Escanea para agregar esta tarjeta a tu Wallet"
+    return "Escanea para guardar el contacto"
 
 
 def ascii_only(text):

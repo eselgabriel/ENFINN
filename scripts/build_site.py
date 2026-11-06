@@ -8,6 +8,14 @@ MAIL_ICON = ('<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-
              '<path d="m22 7-10 6L2 7"/></svg>')
 
 
+def render(template, out, values):
+    page = (ROOT / "scripts" / template).read_text(encoding="utf-8")
+    for key, val in values.items():
+        page = page.replace("{{" + key + "}}", val)
+    out.parent.mkdir(parents=True, exist_ok=True)
+    out.write_text(page, encoding="utf-8")
+
+
 def main():
     cfg = load_config()
     c = cfg["contacto"]
@@ -36,10 +44,8 @@ def main():
         "apple_class": "" if has_apple else "hidden",
         "vcf_nombre": e(ascii_only(f"{c['nombre']}-{c['apellido']}").replace(" ", "-") + ".vcf"),
     }
-    page = (ROOT / "scripts" / "site_template.html").read_text(encoding="utf-8")
-    for key, val in values.items():
-        page = page.replace("{{" + key + "}}", val)
-    (DOCS / "index.html").write_text(page, encoding="utf-8")
+    render("site_template.html", DOCS / "index.html", values)
+    render("wallet_template.html", DOCS / "w" / "index.html", values)
     (DOCS / ".nojekyll").write_text("")
     print("Página creada: docs/index.html"
           f"  (Apple Wallet: {'sí' if has_apple else 'pendiente'},"

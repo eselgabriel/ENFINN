@@ -1,7 +1,6 @@
 {
   "organizacion": "Fundación UniEcuador",
   "titulo_tarjeta": "Tarjeta de Presentación",
-
   "contacto": {
     "nombre": "Zulema",
     "apellido": "Uribe",
@@ -9,19 +8,20 @@
     "cargo": "",
     "telefono": "+15615289884",
     "telefono_mostrado": "+1 (561) 528-9884",
-    "emails": ["global.uniecuador@gmail.com", "Info@uniecuador.edu.ec"],
+    "emails": [
+      "global.uniecuador@gmail.com",
+      "Info@uniecuador.edu.ec"
+    ],
     "web": "https://www.uniecuador.edu.ec",
     "web_mostrada": "www.uniecuador.edu.ec"
   },
-
   "colores": {
     "fondo": "#FFFFFF",
     "texto": "#111111",
     "etiquetas": "#1E6BB8"
   },
-
-  "sitio_publico": "https://TU-USUARIO.github.io/TU-REPO",
-
+  "sitio_publico": "https://eselgabriel.github.io/ENFINN",
+  "qr_del_pase": "wallet",
   "apple": {
     "pass_type_identifier": "pass.ec.edu.uniecuador.tarjeta",
     "team_identifier": "XXXXXXXXXX",
@@ -30,7 +30,6 @@
     "certificado_p12_password_env": "APPLE_P12_PASSWORD",
     "certificado_wwdr": "certs/AppleWWDRCAG4.cer"
   },
-
   "google": {
     "issuer_id": "3388000000000000000",
     "class_suffix": "fue_tarjeta_presentacion",

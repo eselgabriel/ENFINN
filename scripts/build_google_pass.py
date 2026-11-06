@@ -24,7 +24,7 @@ from google.auth import crypt, jwt
 from google.auth.transport.requests import AuthorizedSession
 from google.oauth2 import service_account
 
-from common import BUILD, DOCS, ROOT, build_vcard, load_config, public_url
+from common import BUILD, DOCS, ROOT, load_config, pass_qr_text, pass_qr_value, public_url
 
 API = "https://walletobjects.googleapis.com/walletobjects/v1"
 SCOPES = ["https://www.googleapis.com/auth/wallet_object.issuer"]
@@ -88,8 +88,8 @@ def generic_object(cfg):
         "header": text(c["nombre_mostrado"]),
         "textModulesData": modules,
         "linksModuleData": {"uris": links},
-        "barcode": {"type": "QR_CODE", "value": build_vcard(cfg, ascii_safe=True),
-                    "alternateText": "Escanea para guardar el contacto"},
+        "barcode": {"type": "QR_CODE", "value": pass_qr_value(cfg),
+                    "alternateText": pass_qr_text(cfg)},
     }
 
 
@@ -117,6 +117,8 @@ def main():
 
     cfg = load_config()
     key_path = ROOT / cfg["google"]["service_account_json"]
+    if not cfg["google"]["issuer_id"].isdigit() or cfg["google"]["issuer_id"].startswith("3388000000000000000"):
+        print("Aviso: el Issuer ID parece de ejemplo; usa el tuyo (config.json o GOOGLE_WALLET_ISSUER_ID).")
     if not key_path.exists():
         sys.exit(f"Falta la llave del service account: {key_path.relative_to(ROOT)}\n"
                  "Lee README.md -> 'Google Wallet'.")

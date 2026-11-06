@@ -22,7 +22,7 @@ from cryptography import x509
 from cryptography.hazmat.primitives import hashes, serialization
 from cryptography.hazmat.primitives.serialization import pkcs7, pkcs12
 
-from common import BUILD, DOCS, ROOT, build_vcard, hex_to_rgb, load_config
+from common import BUILD, DOCS, ROOT, hex_to_rgb, load_config, pass_qr_text, pass_qr_value
 
 OUTPUT = DOCS / "tarjeta-fue.pkpass"
 
@@ -34,12 +34,11 @@ def rgb(hex_color):
 
 def pass_json(cfg):
     a, c, col = cfg["apple"], cfg["contacto"], cfg["colores"]
-    vcard = build_vcard(cfg, ascii_safe=True)
     barcode = {
         "format": "PKBarcodeFormatQR",
-        "message": vcard,
+        "message": pass_qr_value(cfg),
         "messageEncoding": "iso-8859-1",
-        "altText": "Escanea para guardar el contacto",
+        "altText": pass_qr_text(cfg),
     }
     back = [
         {"key": "b_tel", "label": "Teléfono", "value": c["telefono_mostrado"],
@@ -52,8 +51,8 @@ def pass_json(cfg):
         {"key": "b_web", "label": "Sitio web", "value": c["web"],
          "dataDetectorTypes": ["PKDataDetectorTypeLink"]},
         {"key": "b_info", "label": "Cómo compartir",
-         "value": "Muestra el código QR: al escanearlo con la cámara, el teléfono "
-                  "ofrece guardar el contacto automáticamente."},
+         "value": "Muestra el código QR: quien lo escanee con la cámara puede "
+                  "agregar esta tarjeta a su Wallet y guardar el contacto."},
     ]
     secondary = [{"key": "tel", "label": "TELÉFONO", "value": c["telefono_mostrado"]}]
     if c.get("cargo"):

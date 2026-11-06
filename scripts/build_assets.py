@@ -6,7 +6,7 @@ import qrcode
 import qrcode.image.svg
 from PIL import Image, ImageDraw, ImageFont
 
-from common import BUILD, DOCS, LOGO, build_vcard, hex_to_rgb, load_config
+from common import BUILD, DOCS, LOGO, WALLET_PATH, build_vcard, hex_to_rgb, load_config, public_url
 
 RAINBOW = ["#E30613", "#1E6BB8", "#2BB7D0", "#4CAF3A", "#F2C318", "#F07D00", "#8E3E96"]
 
@@ -97,6 +97,10 @@ def main():
     # El .vcf descargable conserva acentos (los teléfonos lo leen en UTF-8)
     (DOCS / "contacto.vcf").write_bytes(build_vcard(cfg, ascii_safe=False).encode("utf-8"))
     version = build_qr(vcard_qr, DOCS / "qr-contacto.png", DOCS / "qr-contacto.svg")
+    # QR "como pase físico": abre Agregar a Google/Apple Wallet
+    wallet_url = public_url(cfg, WALLET_PATH)
+    build_qr(wallet_url, DOCS / "qr-wallet.png", DOCS / "qr-wallet.svg")
+    print(f"QR de Wallet -> {wallet_url}")
 
     # --- Web -------------------------------------------------------------
     resized(logo, (512, 512)).save(img_dir / "logo.png")

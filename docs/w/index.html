@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Agregar a Wallet · Fundación UniEcuador</title>
+<meta name="robots" content="noindex">
+<meta property="og:title" content="Zulema Uribe · Fundación UniEcuador">
+<meta property="og:description" content="Agrega esta tarjeta a tu Google Wallet o Apple Wallet.">
+<meta property="og:image" content="https://eselgabriel.github.io/ENFINN/img/google-hero.png">
+<link rel="icon" href="../img/favicon.png">
+<style>
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; min-height: 100vh; background: #f3f4f6; color: #111;
+    font: 16px/1.45 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+    display: flex; align-items: center; justify-content: center; padding: 24px 16px;
+  }
+  main { width: 100%; max-width: 400px; text-align: center; }
+  .rainbow { height: 6px; border-radius: 6px; margin: 0 auto 20px; width: 120px; background: linear-gradient(90deg,
+    #E30613 0 14.28%, #1E6BB8 0 28.57%, #2BB7D0 0 42.85%, #4CAF3A 0 57.14%,
+    #F2C318 0 71.42%, #F07D00 0 85.71%, #8E3E96 0); }
+  img.logo { width: 96px; height: 96px; }
+  h1 { font-size: 24px; margin: 8px 0 2px; }
+  p { color: #5b6270; margin: 0 0 20px; }
+  .btn {
+    display: flex; align-items: center; justify-content: center; gap: 10px; min-height: 52px; margin-top: 10px;
+    border-radius: 14px; font-weight: 600; text-decoration: none; background: #111; color: #fff;
+  }
+  .btn.secondary { background: #fff; color: #111; box-shadow: inset 0 0 0 1px #d1d5db; }
+  .hidden { display: none !important; }
+  .status { font-size: 14px; color: #5b6270; margin-top: 16px; min-height: 20px; }
+</style>
+</head>
+<body>
+<main>
+  <img class="logo" src="../img/logo.png" alt="Logo Fundación UniEcuador">
+  <div class="rainbow"></div>
+  <h1>ZULEMA URIBE</h1>
+  <p>Fundación UniEcuador</p>
+
+  <a class="btn hidden" id="google" href="#">Agregar a Google Wallet</a>
+  <a class="btn hidden" id="apple" href="../tarjeta-fue.pkpass">Agregar a Apple Wallet</a>
+  <a class="btn secondary" href="../contacto.vcf" download="Zulema-Uribe.vcf">Guardar contacto</a>
+  <a class="btn secondary" href="../">Ver tarjeta completa</a>
+  <div class="status" id="status" role="status"></div>
+</main>
+<script>
+(function () {
+  var ua = navigator.userAgent || "";
+  var isIOS = /iPhone|iPad|iPod/.test(ua) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+  var isAndroid = /Android/.test(ua);
+  var google = document.getElementById("google");
+  var apple = document.getElementById("apple");
+  var target = null;
+  if (isAndroid) { apple.classList.add("hidden"); if (!google.classList.contains("hidden")) target = google.href; }
+  if (isIOS) { google.classList.add("hidden"); if (!apple.classList.contains("hidden")) target = apple.href; }
+  if (!target) return;
+  // Abre Wallet automáticamente una sola vez; al volver se ven los botones.
+  var done = false;
+  try { done = sessionStorage.getItem("walletAbierto") === "1"; sessionStorage.setItem("walletAbierto", "1"); } catch (e) {}
+  if (!done) {
+    document.getElementById("status").textContent = "Abriendo tu Wallet…";
+    setTimeout(function () { location.href = target; }, 350);
+  }
+})();
+</script>
+</body>
+</html>
