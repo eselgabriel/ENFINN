@@ -18,30 +18,37 @@ Tarjeta de presentación tipo ID para **Fundación UniEcuador** (Zulema Uribe):
 
 ---
 
-## Activación rápida (todo desde el teléfono, sin instalar nada)
+## Activación rápida con Vercel (desde el teléfono, sin instalar nada)
 
-El repositorio ya trae una automatización (`.github/workflows/tarjeta.yml`). Toma tus credenciales de los *secrets* de GitHub, genera los pases y publica la página en **https://eselgabriel.github.io/ENFINN/**. Tus llaves nunca quedan en el código.
+El repositorio ya trae `vercel.json`. En cada cambio, Vercel genera los pases con tus credenciales y publica la página. Las llaves quedan guardadas como variables cifradas de Vercel y nunca en el código.
 
-**A. Publicar la página.** En GitHub, entra a tu repo → *Settings → Pages → Build and deployment → Source:* **GitHub Actions**.
+**A. Conectar el repositorio con Vercel**
+1. En **vercel.com/new**, inicia sesión con GitHub e importa el repositorio **eselgabriel/ENFINN**.
+2. Deja la configuración como viene (Vercel lee `vercel.json`) y pulsa **Deploy**.
+3. Tu tarjeta queda en `https://<proyecto>.vercel.app`, normalmente `enfinn.vercel.app`. El QR se ajusta solo a esa dirección. Si después conectas un dominio propio (por ejemplo `tarjeta.uniecuador.edu.ec`), vuelve a desplegar y el QR se actualiza.
 
-**B. Google Wallet** (con tu cuenta de Google, gratis):
-1. Entra a **pay.google.com/business/console**. Crea la cuenta de emisor (*Google Wallet API*) y copia el **Issuer ID**, que es un número largo.
-2. En **console.cloud.google.com**: crea un proyecto y habilita **Google Wallet API** en *APIs y servicios → Biblioteca*. Luego, en *IAM → Cuentas de servicio*, crea una cuenta de servicio y, en *Claves → Agregar clave → JSON*, descarga el archivo.
-3. Vuelve a la Wallet Console. En *Users → Invite a user*, pega el correo de la cuenta de servicio (termina en `iam.gserviceaccount.com`) con permiso **Developer**.
-4. En GitHub, ve a *Settings → Secrets and variables → Actions*:
-   - En la pestaña **Secrets** crea `GOOGLE_WALLET_SA_JSON` y pega **todo** el contenido del JSON.
-   - En la pestaña **Variables** crea `GOOGLE_WALLET_ISSUER_ID` con tu Issuer ID.
-5. En *Actions → Publicar tarjeta → Run workflow*, lanza la automatización. En unos 2 minutos el botón y el QR de Google Wallet quedan funcionando.
+**B. Google Wallet** (con tu cuenta de Google, gratis)
+1. Entra a **pay.google.com/business/console**. Crea la cuenta de emisor (*Google Wallet API*) y copia el **Issuer ID**.
+2. En **console.cloud.google.com**: crea un proyecto y habilita **Google Wallet API**. Luego, en *IAM → Cuentas de servicio*, crea una cuenta de servicio y, en *Claves → Agregar clave → JSON*, descarga el archivo.
+3. Vuelve a la Wallet Console. En *Users → Invite a user*, agrega el correo de la cuenta de servicio (`…@…iam.gserviceaccount.com`) con permiso **Developer**.
+4. En Vercel, ve a *Project → Settings → Environment Variables* y crea:
+   - `GOOGLE_WALLET_SA_JSON`: pega **todo** el contenido del JSON.
+   - `GOOGLE_WALLET_ISSUER_ID`: tu Issuer ID.
+5. En *Deployments → ⋯ → Redeploy*, vuelve a desplegar. El botón y el QR de Google Wallet quedan funcionando.
 
-> Mientras la cuenta de emisor esté en **modo demo**, solo tu cuenta (y las que agregues como *test users*) puede guardar el pase. Para que funcione con cualquier persona, en la Wallet Console pide **Publishing access** (*Request publishing access*). Google suele revisarlo en pocos días.
+> Mientras la cuenta de emisor esté en **modo demo**, solo tu cuenta (y los *test users*) puede guardar el pase. Para el público general, en la Wallet Console pide **Publishing access**.
 
-**C. Apple Wallet** (opcional; necesita Apple Developer, USD 99 al año). Crea estos secrets:
+**C. Apple Wallet** (opcional; necesita Apple Developer, USD 99 al año). Crea estas variables en Vercel:
 
 - `APPLE_P12_BASE64`: el `.p12` en base64.
 - `APPLE_P12_PASSWORD`: la contraseña del `.p12`.
 - `APPLE_WWDR_BASE64`: el certificado WWDR G4 en base64.
+- `APPLE_TEAM_ID`
+- `APPLE_PASS_TYPE_ID`
 
-Y estas variables: `APPLE_TEAM_ID` y `APPLE_PASS_TYPE_ID`. Más detalles abajo.
+Más detalles abajo.
+
+Si algo falla durante el build, Vercel igual publica la última versión de `docs/`, así que la página nunca se cae. El detalle del error aparece en el log del deployment.
 
 ---
 
@@ -64,8 +71,8 @@ Genera todo lo que se pueda con las credenciales que existan en `certs/`. Lo que
 
 Google descarga el logo y el banner desde una URL pública, así que la carpeta `docs/` tiene que estar publicada en internet:
 
-- **GitHub Pages**: *Settings → Pages → Branch: main, carpeta `/docs`*. (En repos privados, GitHub Pages requiere un plan de pago.)
-- O súbela a `uniecuador.edu.ec/tarjeta` o a Netlify, Vercel, etc.
+- **Vercel** (recomendado): ver "Activación rápida".
+- O súbela a `uniecuador.edu.ec/tarjeta`, GitHub Pages, Netlify, etc.
 
 Pon esa dirección en `"sitio_publico"` dentro de `config.json` y vuelve a generar.
 
@@ -82,7 +89,7 @@ Requiere una cuenta de **Apple Developer** (USD 99 al año).
    export APPLE_P12_PASSWORD='tu-contraseña'
    python3 scripts/build.py
    ```
-   El resultado queda en `docs/tarjeta-fue.pkpass`. El servidor debe entregarlo con el tipo `application/vnd.apple.pkpass`; GitHub Pages ya lo hace así.
+   El resultado queda en `docs/tarjeta-fue.pkpass`. El servidor debe entregarlo con el tipo `application/vnd.apple.pkpass`; `vercel.json` ya lo configura.
 
 Para probar el empaquetado sin certificados: `python3 scripts/build_apple_pass.py --prueba`. Ese archivo de prueba no abre en Wallet.
 
@@ -107,9 +114,12 @@ Si no quieres usar la API: `python3 scripts/build_google_pass.py --sin-api`. En 
 
 ```
 config.json                 datos de la tarjeta (editar aquí)
+vercel.json                 configuración de Vercel
 assets/logo-fue.png         logo original
 scripts/
   build.py                  genera todo
+  vercel-build.sh           build que ejecuta Vercel
+  vercel_build.py           carga credenciales desde variables de Vercel
   build_assets.py           QR, .vcf e imágenes
   build_apple_pass.py       .pkpass firmado
   build_google_pass.py      pase de Google y enlace

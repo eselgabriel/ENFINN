@@ -20,7 +20,7 @@
     "texto": "#111111",
     "etiquetas": "#1E6BB8"
   },
-  "sitio_publico": "https://eselgabriel.github.io/ENFINN",
+  "sitio_publico": "https://enfinn.vercel.app",
   "qr_del_pase": "wallet",
   "apple": {
     "pass_type_identifier": "pass.ec.edu.uniecuador.tarjeta",

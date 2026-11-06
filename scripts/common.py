@@ -25,6 +25,11 @@ def load_config():
     for env, (section, key) in ENV_OVERRIDES.items():
         if os.environ.get(env):
             cfg[section][key] = os.environ[env].strip()
+    # Dirección pública: SITIO_PUBLICO o, en Vercel, el dominio de producción
+    if os.environ.get("SITIO_PUBLICO"):
+        cfg["sitio_publico"] = os.environ["SITIO_PUBLICO"].strip().rstrip("/")
+    elif os.environ.get("VERCEL_PROJECT_PRODUCTION_URL"):
+        cfg["sitio_publico"] = "https://" + os.environ["VERCEL_PROJECT_PRODUCTION_URL"].strip().rstrip("/")
     return cfg
 
 
