@@ -1,0 +1,5 @@
+qrcode[pil]>=7.4
+pillow>=10.0
+cryptography>=42.0
+google-auth>=2.20
+requests>=2.31

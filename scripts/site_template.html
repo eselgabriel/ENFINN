@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>{{nombre_titulo}} · {{organizacion}}</title>
+<meta name="description" content="Tarjeta de presentación digital de {{nombre_titulo}} – {{organizacion}}">
+<meta property="og:title" content="{{nombre_titulo}} · {{organizacion}}">
+<meta property="og:description" content="Guarda mi contacto o agrega la tarjeta a tu Wallet.">
+<meta property="og:image" content="{{og_image}}">
+<meta name="theme-color" content="#ffffff">
+<link rel="icon" href="img/favicon.png">
+<link rel="apple-touch-icon" href="img/apple-touch-icon.png">
+<style>
+  :root {
+    --bg: #f3f4f6; --card: #ffffff; --ink: #111111; --muted: #5b6270;
+    --line: #e5e7eb; --accent: {{color_etiquetas}}; --btn: #111111; --btn-ink: #ffffff;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #0b0d12; --card: #ffffff; }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; min-height: 100vh; background: var(--bg); color: var(--ink);
+    font: 16px/1.45 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    display: flex; justify-content: center; padding: 24px 16px 40px;
+  }
+  main { width: 100%; max-width: 420px; }
+  .card {
+    background: var(--card); border-radius: 22px; overflow: hidden;
+    box-shadow: 0 1px 2px rgba(0,0,0,.06), 0 12px 32px rgba(0,0,0,.10);
+  }
+  .rainbow { height: 8px; background: linear-gradient(90deg,
+    #E30613 0 14.28%, #1E6BB8 0 28.57%, #2BB7D0 0 42.85%, #4CAF3A 0 57.14%,
+    #F2C318 0 71.42%, #F07D00 0 85.71%, #8E3E96 0); }
+  .head { display: flex; align-items: center; gap: 14px; padding: 20px 20px 4px; }
+  .head img { width: 64px; height: 64px; }
+  .org { font-size: 13px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+  .who { padding: 8px 20px 4px; }
+  .label { font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--accent); }
+  h1 { margin: 2px 0 0; font-size: 28px; line-height: 1.15; letter-spacing: -.01em; }
+  .role { color: var(--muted); margin-top: 2px; }
+  .rows { list-style: none; margin: 12px 0 0; padding: 0 8px; }
+  .rows a {
+    display: flex; align-items: center; gap: 12px; padding: 11px 12px; border-radius: 12px;
+    color: inherit; text-decoration: none; min-height: 44px; word-break: break-all;
+  }
+  .rows a:active, .rows a:hover { background: #f3f4f6; }
+  .rows svg { width: 20px; height: 20px; flex: none; color: var(--accent); }
+  .qr { margin: 12px 20px 20px; padding: 16px; border: 1px solid var(--line); border-radius: 16px; text-align: center; }
+  .qr button { all: unset; cursor: zoom-in; display: block; margin: 0 auto; }
+  .qr img { width: 100%; max-width: 230px; display: block; margin: 0 auto; image-rendering: pixelated; }
+  .qr p { margin: 8px 0 0; font-size: 14px; color: var(--muted); }
+  .actions { display: grid; gap: 10px; margin-top: 18px; }
+  .btn {
+    display: flex; align-items: center; justify-content: center; gap: 10px; min-height: 52px;
+    border-radius: 14px; font-weight: 600; font-size: 16px; text-decoration: none; border: 0;
+    background: var(--btn); color: var(--btn-ink); cursor: pointer; font-family: inherit; width: 100%;
+  }
+  .btn svg { width: 22px; height: 22px; }
+  .btn.secondary { background: var(--card); color: var(--ink); box-shadow: inset 0 0 0 1px #d1d5db; }
+  .hidden { display: none !important; }
+  .toast {
+    position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%); background: #111; color: #fff;
+    padding: 10px 16px; border-radius: 999px; font-size: 14px; opacity: 0; transition: opacity .2s; pointer-events: none;
+  }
+  .toast.show { opacity: 1; }
+  .zoom {
+    position: fixed; inset: 0; background: #fff; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; gap: 16px; padding: 24px; cursor: zoom-out;
+  }
+  .zoom img { width: min(90vw, 90vh, 520px); image-rendering: pixelated; }
+  .zoom p { margin: 0; color: #5b6270; text-align: center; }
+  footer { text-align: center; font-size: 12px; color: #8a909c; margin-top: 18px; }
+</style>
+</head>
+<body>
+<main>
+  <section class="card" aria-label="Tarjeta de presentación">
+    <div class="rainbow"></div>
+    <div class="head">
+      <img src="img/logo.png" alt="Logo {{organizacion}}">
+      <div class="org">{{organizacion}}</div>
+    </div>
+    <div class="who">
+      <div class="label">{{titulo_tarjeta}}</div>
+      <h1>{{nombre_mostrado}}</h1>
+      {{cargo_html}}
+    </div>
+    <ul class="rows">
+      <li><a href="tel:{{telefono}}">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"/></svg>
+        <span>{{telefono_mostrado}}</span></a></li>
+      {{emails_html}}
+      <li><a href="{{web}}" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+        <span>{{web_mostrada}}</span></a></li>
+    </ul>
+    <div class="qr">
+      <button type="button" id="qrBtn" aria-label="Ver código QR en grande">
+        <img src="qr-contacto.svg" alt="Código QR con la información de contacto">
+      </button>
+      <p>Escanea con la cámara para guardar el contacto</p>
+    </div>
+  </section>
+
+  <div class="actions">
+    <a class="btn {{apple_class}}" id="appleBtn" href="tarjeta-fue.pkpass">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M16.4 12.6c0-2.6 2.1-3.8 2.2-3.9-1.2-1.8-3.1-2-3.7-2-1.6-.2-3.1.9-3.9.9-.8 0-2-.9-3.4-.9-1.7 0-3.3 1-4.2 2.6-1.8 3.1-.5 7.7 1.3 10.2.9 1.2 1.9 2.6 3.2 2.6 1.3-.1 1.8-.8 3.3-.8 1.6 0 2 .8 3.4.8 1.4 0 2.3-1.3 3.1-2.5 1-1.4 1.4-2.8 1.4-2.9-.1 0-2.7-1-2.7-4.1zM13.9 5c.7-.9 1.2-2 1-3.2-1 0-2.3.7-3 1.6-.7.8-1.2 2-1.1 3.1 1.2.1 2.3-.6 3.1-1.5z"/></svg>
+      Agregar a Apple Wallet
+    </a>
+    <a class="btn {{google_class}}" id="googleBtn" href="{{google_link}}" target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="3"/><path d="M2 10h20"/></svg>
+      Agregar a Google Wallet
+    </a>
+    <a class="btn secondary" href="contacto.vcf" download="{{vcf_nombre}}">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M19 8v6M22 11h-6"/></svg>
+      Guardar contacto
+    </a>
+    <button class="btn secondary" type="button" id="shareBtn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8M16 6l-4-4-4 4M12 2v13"/></svg>
+      Compartir tarjeta
+    </button>
+  </div>
+  <footer>{{organizacion}} · {{web_mostrada}}</footer>
+</main>
+
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+(function () {
+  var ua = navigator.userAgent || "";
+  var isIOS = /iPhone|iPad|iPod/.test(ua) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+  var isAndroid = /Android/.test(ua);
+  var apple = document.getElementById("appleBtn");
+  var google = document.getElementById("googleBtn");
+  // Mostrar primero el botón de Wallet que corresponde al teléfono
+  if (isAndroid && apple && google) google.parentNode.insertBefore(google, apple);
+  if (isIOS && google) google.classList.add("hidden");
+  if (isAndroid && apple) apple.classList.add("hidden");
+
+  var toast = document.getElementById("toast");
+  function say(msg) {
+    toast.textContent = msg; toast.classList.add("show");
+    setTimeout(function () { toast.classList.remove("show"); }, 2200);
+  }
+
+  document.getElementById("shareBtn").addEventListener("click", function () {
+    var data = { title: document.title, text: "Mi tarjeta de presentación – {{organizacion}}", url: location.href.split("#")[0] };
+    if (navigator.share) {
+      navigator.share(data).catch(function () {});
+    } else if (navigator.clipboard) {
+      navigator.clipboard.writeText(data.url).then(function () { say("Enlace copiado"); });
+    } else {
+      prompt("Copia este enlace:", data.url);
+    }
+  });
+
+  document.getElementById("qrBtn").addEventListener("click", function () {
+    var z = document.createElement("div");
+    z.className = "zoom";
+    z.innerHTML = '<img src="qr-contacto.svg" alt="Código QR"><p>Escanea con la cámara para guardar el contacto<br>Toca para cerrar</p>';
+    z.addEventListener("click", function () { z.remove(); });
+    document.body.appendChild(z);
+  });
+})();
+</script>
+</body>
+</html>

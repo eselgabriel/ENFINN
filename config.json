@@ -1,0 +1,40 @@
+{
+  "organizacion": "Fundación UniEcuador",
+  "titulo_tarjeta": "Tarjeta de Presentación",
+
+  "contacto": {
+    "nombre": "Zulema",
+    "apellido": "Uribe",
+    "nombre_mostrado": "ZULEMA URIBE",
+    "cargo": "",
+    "telefono": "+15615289884",
+    "telefono_mostrado": "+1 (561) 528-9884",
+    "emails": ["global.uniecuador@gmail.com", "Info@uniecuador.edu.ec"],
+    "web": "https://www.uniecuador.edu.ec",
+    "web_mostrada": "www.uniecuador.edu.ec"
+  },
+
+  "colores": {
+    "fondo": "#FFFFFF",
+    "texto": "#111111",
+    "etiquetas": "#1E6BB8"
+  },
+
+  "sitio_publico": "https://TU-USUARIO.github.io/TU-REPO",
+
+  "apple": {
+    "pass_type_identifier": "pass.ec.edu.uniecuador.tarjeta",
+    "team_identifier": "XXXXXXXXXX",
+    "serial_number": "FUE-ZULEMA-URIBE-001",
+    "certificado_p12": "certs/pass.p12",
+    "certificado_p12_password_env": "APPLE_P12_PASSWORD",
+    "certificado_wwdr": "certs/AppleWWDRCAG4.cer"
+  },
+
+  "google": {
+    "issuer_id": "3388000000000000000",
+    "class_suffix": "fue_tarjeta_presentacion",
+    "object_suffix": "fue_zulema_uribe_001",
+    "service_account_json": "certs/google-service-account.json"
+  }
+}

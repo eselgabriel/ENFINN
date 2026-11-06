@@ -1,0 +1,8 @@
+# Credenciales: NUNCA subirlas al repositorio
+certs/
+*.p12
+*.pem
+*.key
+service-account*.json
+__pycache__/
+build/
